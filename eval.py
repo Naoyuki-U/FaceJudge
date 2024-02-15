@@ -9,10 +9,14 @@ class_names = ['なおゆき', 'しゅり', 'せいや', '粗品']
 
 def evaluation(img_path, model_path):
 
-    answer = ""
-    percent = ""
-    face_detect_img_path = "./static/images/face_detect/face_detect.png"
-    target_image_path = "./static/images/cut_dace/cut_dace.png"
+    answerList = []
+    percentList = []
+    face_detect_img_pathFull = ""
+    target_img_pathList = []
+    i = 0
+    face_detect_img_path = "./static/images/face_detect/face_detect_"
+    target_img_path = "./static/images/cut_dace/cut_dace_"
+    ext = ".png"
 
     model = load_model(model_path) #モデルと重みを復元
 
@@ -27,13 +31,15 @@ def evaluation(img_path, model_path):
     lists = cascade.detectMultiScale(fname_gray, minSize=(32, 32))
 
 
-
     # forですべての顔を赤い長方形で囲む
     for (x,y,w,h) in lists:
         cv2.rectangle(fname_color, (x,y), (x+w, y+h), (0, 0, 255), thickness=2)
-        cv2.imwrite(face_detect_img_path, fname_color)
+        face_detect_img_pathFull = f"{face_detect_img_path}{str(i)}{ext}"
+        cv2.imwrite(face_detect_img_pathFull, fname_color)
         fname_color_cut = cv2.resize((fname_color[y:y+h, x:x+w]), (heigth, width))
-        cv2.imwrite(target_image_path, fname_color_cut)
+        target_img_pathFull = f"{target_img_path}{str(i)}{ext}"
+        cv2.imwrite(target_img_pathFull, fname_color_cut)
+        target_img_pathList.append(target_img_pathFull)
 
 
         fname_gray_cut = cv2.resize((fname_gray[y:y+h, x:x+w]), (heigth, width))
@@ -44,9 +50,12 @@ def evaluation(img_path, model_path):
         predictions = model.predict(cut_images)
 
         answer = class_names[np.argmax(predictions[0])]
+        answerList.append(answer)
         percent = 100*np.max(predictions[0])
+        percentList.append(percent)
         # print(f"この顔は {answer} です。")
         # print(f"確率: {percent}")
+        i += 1
 
     # 判定結果と加工した画像のpathを返す
-    return [answer, percent, face_detect_img_path, target_image_path]
+    return [answerList, percentList, target_img_pathList], face_detect_img_pathFull, i

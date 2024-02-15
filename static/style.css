@@ -27,3 +27,28 @@
   padding:5px; width:200px;
   border:1px solid #a9a9a9;
 }
+
+#preview img {
+  width: 200px;
+  margin: 10px;
+  border: solid 1px silver;
+}
+
+.ResultTable {
+  width: 50%;
+  text-align: center;
+  border-collapse: collapse;
+  border-spacing: 0;
+  /* text-align: center; */
+ }
+ .ResultTable th {
+  /* padding: 10px; */
+  background: #e9faf9;
+  border: solid 1px #778ca3;
+  /* text-align: center */
+ }
+ .ResultTable td {
+  /* padding: 10px; */
+  border: solid 1px #778ca3;
+  /* text-align: center */
+ }

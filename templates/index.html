@@ -9,9 +9,88 @@
       AIが写真から顔を検出します。(せいや、粗品に対応)
     </p>
 
-    <input type = "file" name = "file"></input>
+    <input type = "file" name = "file" onchange="OnFileSelect( this );"></input>
     <button type="submit" style="margin-top:5px;">顔検出開始！</button>
-    <!-- <input type="submit" style="margin-top:5px;" value="顔検出開始！"></input> -->
+
+    <p id="image" ></p>
+
+    <div id="div1"></div> 
+
+    <table class="ResultTable" id="ResultTable">
+        <tr>
+          <th>画像</th>
+          <th>判定結果</th>
+          <th>確率(%)</th>
+        </tr>
+    </table>
+
+      <script type="text/javascript">
+        function OnFileSelect( inputElement )
+        {
+          // ファイルリストを取得
+          var file = inputElement.files[0];
+          var image = "";
+          // FileReaderを生成
+          var fileReader = new FileReader();
+          // 読み込み完了時の処理を追加
+          fileReader.onload = function() {
+            // <img>タグの生成
+            image += "<img src=\"" + this.result + "\" />\r\n";
+            // <p>タグに<img>を設定
+            document.getElementById( "image" ).innerHTML = image;
+          };
+          // ファイルの読み込み(Data URI Schemeの取得)
+          fileReader.readAsDataURL( file );
+        }
+
+        var judge = {{result|tojson}};
+        var detect_img = {{detect_img|tojson}};
+        var Count = {{count|tojson}};
+        if (judge != "")
+        {
+          var div1 = document.getElementById("div1");          
+          const newdetectimg = document.createElement("p");
+          newdetectimg.innerHTML = "<img src=" + detect_img + ">";
+          div1.appendChild(newdetectimg);
+          var ResultTable = document.getElementById("ResultTable");
+
+          for (let i = 0; i < Count; i++)
+          {
+            const newResulttr = document.createElement("tr");
+            const newResulttd1 = document.createElement("td");
+            const newResulttd2 = document.createElement("td");
+            const newResulttd3 = document.createElement("td");
+            
+            newResulttd1.innerHTML = "<img src=" + judge[2][i] + ">";
+            newResulttd2.innerHTML = judge[0][i];
+            newResulttd3.innerHTML = judge[1][i];
+            
+            ResultTable.appendChild(newResulttr);
+            ResultTable.appendChild(newResulttd1);
+            ResultTable.appendChild(newResulttd2);
+            ResultTable.appendChild(newResulttd3);
+
+
+
+
+
+
+
+
+
+            // const newresult = document.createElement("p");
+            // const newcutimg = document.createElement("p");
+
+            // newresult.innerHTML = "この顔は" + judge[0][i] + "の確率" + judge[1][i] + "%です";
+            // newcutimg.innerHTML = "<img src=" + judge[2][i] + ">";
+
+            // div1.appendChild(newresult);
+            // div1.appendChild(newcutimg);
+          }
+        }
+
+      </script>
+
         
 
 
